@@ -81,8 +81,8 @@ T distance(const Plucker<T>& line, const Vector4<T>& point, T tolerance)
         return static_cast<T>(0);
 
     const Vector3<T> p = point.head(3);
-    const auto n1 = line.l().cross(p) + point.w() * line.m();
-    const auto n2 = line.l().cross(n1);
+    const Vector3<T> n1 = line.l().cross(p) + point.w() * line.m();
+    const Vector3<T> n2 = line.l().cross(n1);
     const auto d2 = - line.m().dot(n1);
     return std::abs(n2.dot((p)) + d2) / n2.norm();
 }
@@ -94,8 +94,8 @@ T distance(const Plucker<T>& line, const Vector4<T>& point, T tolerance)
 template<typename T>
 T distance(const Plucker<T>& line, const Vector3<T>& point)
 {
-    const auto moment = line.m() - point.cross(line.l());
-    const auto p_perp = point + line.l().cross(moment);
+    const Vector3<T> moment = line.m() - point.cross(line.l());
+    const Vector3<T> p_perp = point + line.l().cross(moment);
     return (p_perp - point).norm();
 }
 
