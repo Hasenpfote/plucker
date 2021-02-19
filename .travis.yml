@@ -165,6 +165,6 @@ before_script:
   - cd build
 
 script:
-  - cmake -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DDUALQUAD_BUILD_TESTING=ON ..
+  - cmake -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DPLUCKER_BUILD_TESTING=ON ..
   - make VERBOSE=1
   - ctest -V
