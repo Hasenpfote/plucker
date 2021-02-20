@@ -1,7 +1,7 @@
 /**
  * @file plucker/plane.h
  */
-#include <Eigen/Geometry>
+#include <Eigen/Core>
 
 namespace plucker
 {
@@ -21,86 +21,36 @@ public:
     {}
 
     Plane(T a, T b, T c, T d)
-        : a_(a), b_(b), c_(c), d_(d)
+        : coord_(a, b, c, d)
     {}
 
-    Plane(Vector3 n, T d)
-        : Plane(n.x(), n.y(), n.z(), d)
+    Plane(const Vector3& n, T d)
+        : coord_((Vector4() << n, d).finished())
     {}
 
-    explicit Plane(Vector4 v)
-        : Plane(v.x(), v.y(), v.z(), v.w())
+    explicit Plane(const Vector4& coord)
+        : coord_(coord)
     {}
 
 /* Accessors */
-    T a() const noexcept { return a_; }
-    T b() const noexcept { return b_; }
-    T c() const noexcept { return c_; }
-    T d() const noexcept { return d_; }
+    T a() const noexcept { return coord_.x(); }
+    T b() const noexcept { return coord_.y(); }
+    T c() const noexcept { return coord_.z(); }
+    T d() const noexcept { return coord_.w(); }
 
-    T& a() noexcept { return a_; }
-    T& b() noexcept { return b_; }
-    T& c() noexcept { return c_; }
-    T& d() noexcept { return d_; }
+    T& a() noexcept { return coord_.x(); }
+    T& b() noexcept { return coord_.y(); }
+    T& c() noexcept { return coord_.z(); }
+    T& d() noexcept { return coord_.w(); }
 
-    Vector3 normal() const noexcept { return Vector3(a_, b_, c_); }
-    Vector4 as_vector4() const noexcept { return Vector4(a_, b_, c_, d_); }
+    Eigen::Ref<const Vector3> normal() const noexcept { return coord_.head(3); }
+    Eigen::Ref<Vector3> normal() noexcept { return coord_.head(3); }
 
-/* Assignment operators */
-    Plane& operator *= (T);
+    const Vector4& coord() const noexcept { return coord_; }
+    Vector4& coord() noexcept { return coord_; }
 
 private:
-    T a_;
-    T b_;
-    T c_;
-    T d_;
+    Vector4 coord_;
 };
-
-/* Assignment operators */
-
-template<typename T>
-Plane<T>&
-Plane<T>::operator *= (T rhs)
-{
-    a_ *= rhs;
-    b_ *= rhs;
-    c_ *= rhs;
-    d_ *= rhs;
-    return *this;
-}
-
-/* Unary operators */
-
-template<typename T>
-Plane<T>
-operator + (const Plane<T>& p)
-{
-    return p;
-}
-
-template<typename T>
-Plane<T>
-operator - (const Plane<T>& p)
-{
-    return Plane<T>(-p.a(), -p.b(), -p.c(), -p.d());
-}
-
-/* Binary operators */
-
-template<typename T>
-Plane<T>
-operator * (const Plane<T>& lhs, T rhs)
-{
-    Plane<T> temp(lhs);
-    return temp *= rhs;
-}
-
-template<typename T>
-Plane<T>
-operator * (T lhs, const Plane<T>& rhs)
-{
-    Plane<T> temp(rhs);
-    return temp *= lhs;
-}
 
 }   // namespace plucker

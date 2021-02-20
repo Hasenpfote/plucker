@@ -197,7 +197,7 @@ TYPED_TEST(PluckerFindTest, find_origin_plane_through_line)
 
         const auto res = find_origin_plane_through_line(line, atol);
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).as_vector4(), atol);
+        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).coord(), atol);
     }
     {
         const auto from = Vector3(TypeParam(0), TypeParam(0), TypeParam(6));
@@ -228,7 +228,7 @@ TYPED_TEST(PluckerFindTest, find_plane_through_line)
 
         const auto res = find_plane_through_line(line, atol);
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).as_vector4(), atol);
+        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).coord(), atol);
     }
     {
         const auto from = Vector3(TypeParam(0), TypeParam(0), TypeParam(6));
@@ -261,7 +261,7 @@ TYPED_TEST(PluckerFindTest, find_common_plane_of_line_and_point)
 
         const auto res = find_common_plane(line, point, atol);
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).as_vector4(), atol);
+        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).coord(), atol);
     }
     {
         const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -294,7 +294,7 @@ TYPED_TEST(PluckerFindTest, find_common_plane_of_line_and_vector)
 
         const auto res = find_common_plane(line, vector, atol);
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).as_vector4(), atol);
+        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).coord(), atol);
     }
     {
         const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));

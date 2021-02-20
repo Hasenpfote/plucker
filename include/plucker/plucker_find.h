@@ -35,7 +35,7 @@ template<typename T>
 std::tuple<bool, Vector4<T>>
 find_intersection(const Plucker<T>& line, const Plane<T>& plane, T tolerance)
 {
-    const auto n = plane.normal();
+    const Vector3<T> n = plane.normal();
     if(detail::are_perpendicular(line.l(), n, tolerance))
         return std::make_tuple(false, Vector4<T>());
 
@@ -52,8 +52,8 @@ template<typename T>
 std::tuple<bool, Plucker<T>>
 find_intersection(const Plane<T>& plane1, const Plane<T>& plane2, T tolerance)
 {
-    const auto n1 = plane1.normal();
-    const auto n2 = plane2.normal();
+    const Vector3<T> n1 = plane1.normal();
+    const Vector3<T> n2 = plane2.normal();
     if(detail::are_parallel(n1, n2, tolerance))
         return std::make_tuple(false, Plucker<T>());
 

@@ -53,6 +53,7 @@ target_sources(
     test_plucker_query.cpp
     test_plucker_geometric.cpp
     test_plucker_find.cpp
+    test_plane.cpp
     # Add a new file here.
     )
 

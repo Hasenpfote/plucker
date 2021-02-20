@@ -136,7 +136,7 @@ bool contains(const Plucker<T> line, const Vector4<T>& point, T tolerance)
 template<typename T>
 bool contains(const Plane<T> plane, const Vector4<T>& point, T tolerance)
 {
-    return detail::almost_zero(plane.as_vector4().dot(point), tolerance);
+    return detail::almost_zero(plane.coord().dot(point), tolerance);
 }
 
 /**
@@ -145,7 +145,7 @@ bool contains(const Plane<T> plane, const Vector4<T>& point, T tolerance)
 template<typename T>
 bool contains(const Plane<T>& plane, const Plucker<T> line, T tolerance)
 {
-    if(!detail::are_perpendicular(plane.normal(), line.l(), tolerance))
+    if(!detail::are_perpendicular(plane.normal().eval(), line.l(), tolerance))
         return false;
 
     Vector4<T> point;
