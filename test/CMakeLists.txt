@@ -47,6 +47,7 @@ target_sources(
     PRIVATE
     gtest_helper.h
     gtest_helper.cpp
+    test_mat_relational.cpp
     test_plucker_base.cpp
     test_plucker_common.cpp
     test_plucker_query.cpp
@@ -81,7 +82,7 @@ target_link_libraries(
     gtest
     gmock_main
     )
-    
+
 target_compile_definitions(
     ${TEST_NAME}
     PRIVATE

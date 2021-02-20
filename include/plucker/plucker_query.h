@@ -6,7 +6,8 @@
 
 #include <cassert>
 #include <cmath>
-#include "vec_relational.h"
+#include "relational.h"
+#include "mat_relational.h"
 #include "plane.h"
 
 namespace plucker
