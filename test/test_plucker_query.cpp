@@ -33,24 +33,24 @@ TYPED_TEST_SUITE(PluckerQueryTest, MyTypes);
 
 TYPED_TEST(PluckerQueryTest, is_at_infinity)
 {
-    using Vector4 = plucker::Vector4<TypeParam>;
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerQueryTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
 
-        const Plucker p(from, to);
+        const Plucker p(from.homogeneous().eval(), to.homogeneous().eval());
 
         EXPECT_TRUE(is_at_infinity(p, atol));
     }
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-        const Plucker p(from, to);
+        const Plucker p(from.homogeneous().eval(), to.homogeneous().eval());
 
         EXPECT_FALSE(is_at_infinity(p, atol));
     }
@@ -58,24 +58,24 @@ TYPED_TEST(PluckerQueryTest, is_at_infinity)
 
 TYPED_TEST(PluckerQueryTest, passes_through_origin)
 {
-    using Vector4 = plucker::Vector4<TypeParam>;
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerQueryTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(0), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(0), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(0), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(0), TypeParam(4));
 
-        const Plucker p(from, to);
+        const Plucker p(from.homogeneous().eval(), to.homogeneous().eval());
 
         EXPECT_TRUE(passes_through_origin(p, atol));
     }
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-        const Plucker p(from, to);
+        const Plucker p(from.homogeneous().eval(), to.homogeneous().eval());
 
         EXPECT_FALSE(passes_through_origin(p, atol));
     }
@@ -84,25 +84,42 @@ TYPED_TEST(PluckerQueryTest, passes_through_origin)
 TYPED_TEST(PluckerQueryTest, are_same)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
-    using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerQueryTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-        EXPECT_TRUE(are_same(Plucker(from, to), Plucker(from, to), atol));
-        EXPECT_TRUE(are_same(Plucker(from, to), Plucker(to, from), atol));
+        EXPECT_TRUE(
+            are_same(
+                Plucker(from.homogeneous().eval(), to.homogeneous().eval()),
+                Plucker(from.homogeneous().eval(), to.homogeneous().eval()),
+                atol
+            )
+        );
+        EXPECT_TRUE(
+            are_same(
+                Plucker(from.homogeneous().eval(), to.homogeneous().eval()),
+                Plucker(to.homogeneous().eval(), from.homogeneous().eval()),
+                atol
+            )
+        );
     }
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(0), TypeParam(2), TypeParam(0), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(2), TypeParam(0), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(0), TypeParam(2), TypeParam(0));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(2), TypeParam(0));
 
-        EXPECT_FALSE(are_same(Plucker(from1, to1), Plucker(from2, to2), atol));
+        EXPECT_FALSE(
+            are_same(
+                Plucker(from1.homogeneous().eval(), to1.homogeneous().eval()),
+                Plucker(from2.homogeneous().eval(), to2.homogeneous().eval()),
+                atol
+            )
+        );
     }
     {
         const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -111,39 +128,63 @@ TYPED_TEST(PluckerQueryTest, are_same)
         const auto l = to - from;
         const auto m = from.cross(l);
 
-        EXPECT_TRUE(are_same(Plucker(l, m), Plucker(static_cast<Vector3>(2 * l), static_cast<Vector3>(2 * m)), atol));
-        EXPECT_TRUE(are_same(Plucker(l, m), Plucker(static_cast<Vector3>(-2 * l), static_cast<Vector3>(-2 * m)), atol));
-        EXPECT_FALSE(are_same(Plucker(l, m), Plucker(static_cast<Vector3>(2 * l), static_cast<Vector3>(-2 * m)), atol));
-        EXPECT_FALSE(are_same(Plucker(l, m), Plucker(static_cast<Vector3>(2 * l), static_cast<Vector3>(3 * m)), atol));
+        EXPECT_TRUE(
+            are_same(
+                Plucker(l, m),
+                Plucker((TypeParam(2) * l).eval(), (TypeParam(2) * m).eval()),
+                atol
+            )
+        );
+        EXPECT_TRUE(
+            are_same(
+                Plucker(l, m),
+                Plucker((TypeParam(-2) * l).eval(), (TypeParam(-2) * m).eval()),
+                atol
+            )
+        );
+        EXPECT_FALSE(
+            are_same(
+                Plucker(l, m),
+                Plucker((TypeParam(2) * l).eval(), (TypeParam(-2) * m).eval()),
+                atol
+            )
+        );
+        EXPECT_FALSE(
+            are_same(
+                Plucker(l, m),
+                Plucker((TypeParam(2) * l).eval(), (TypeParam(3) * m).eval()),
+                atol
+            )
+        );
     }
 }
 
 TYPED_TEST(PluckerQueryTest, are_perpendicular)
 {
-    using Vector4 = plucker::Vector4<TypeParam>;
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerQueryTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(0), TypeParam(0), TypeParam(0), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(0), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(0), TypeParam(0), TypeParam(0));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(0));
 
-        const Plucker p1(from1, to1);
-        const Plucker p2(from2, to2);
+        const Plucker p1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker p2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         EXPECT_TRUE(are_perpendicular(p1, p2, atol));
     }
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(2), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(2), TypeParam(2), TypeParam(6));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(2), TypeParam(4));
 
-        const Plucker p1(from1, to1);
-        const Plucker p2(from2, to2);
+        const Plucker p1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker p2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         EXPECT_FALSE(are_perpendicular(p1, p2, atol));
     }
@@ -151,30 +192,30 @@ TYPED_TEST(PluckerQueryTest, are_perpendicular)
 
 TYPED_TEST(PluckerQueryTest, are_parallel)
 {
-    using Vector4 = plucker::Vector4<TypeParam>;
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerQueryTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(6), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(4), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(6));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(4));
 
-        const Plucker p1(from1, to1);
-        const Plucker p2(from2, to2);
+        const Plucker p1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker p2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         EXPECT_TRUE(are_parallel(p1, p2, atol));
     }
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(0), TypeParam(0), TypeParam(0), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(0), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(0), TypeParam(0), TypeParam(0));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(0));
 
-        const Plucker p1(from1, to1);
-        const Plucker p2(from2, to2);
+        const Plucker p1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker p2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         EXPECT_FALSE(are_parallel(p1, p2, atol));
     }
@@ -182,30 +223,30 @@ TYPED_TEST(PluckerQueryTest, are_parallel)
 
 TYPED_TEST(PluckerQueryTest, are_coplanar)
 {
-    using Vector4 = plucker::Vector4<TypeParam>;
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerQueryTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(6), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(4), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(6));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(4));
 
-        const Plucker p1(from1, to1);
-        const Plucker p2(from2, to2);
+        const Plucker p1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker p2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         EXPECT_TRUE(are_coplanar(p1, p2, atol));
     }
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(0), TypeParam(0), TypeParam(0), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(0), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(0), TypeParam(0), TypeParam(0));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(0));
 
-        const Plucker p1(from1, to1);
-        const Plucker p2(from2, to2);
+        const Plucker p1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker p2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         EXPECT_FALSE(are_coplanar(p1, p2, atol));
     }
@@ -213,30 +254,30 @@ TYPED_TEST(PluckerQueryTest, are_coplanar)
 
 TYPED_TEST(PluckerQueryTest, are_skew)
 {
-    using Vector4 = plucker::Vector4<TypeParam>;
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerQueryTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(0), TypeParam(0), TypeParam(0), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(0), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(0), TypeParam(0), TypeParam(0));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(0));
 
-        const Plucker p1(from1, to1);
-        const Plucker p2(from2, to2);
+        const Plucker p1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker p2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         EXPECT_TRUE(are_skew(p1, p2, atol));
     }
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(6), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(4), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(6));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(4));
 
-        const Plucker p1(from1, to1);
-        const Plucker p2(from2, to2);
+        const Plucker p1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker p2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         EXPECT_FALSE(are_skew(p1, p2, atol));
     }
@@ -244,30 +285,30 @@ TYPED_TEST(PluckerQueryTest, are_skew)
 
 TYPED_TEST(PluckerQueryTest, has_intersection)
 {
-    using Vector4 = plucker::Vector4<TypeParam>;
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerQueryTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(0), TypeParam(2), TypeParam(0), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(2), TypeParam(0), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(0), TypeParam(2), TypeParam(0));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(2), TypeParam(0));
 
-        const Plucker p1(from1, to1);
-        const Plucker p2(from2, to2);
+        const Plucker p1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker p2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         EXPECT_TRUE(has_intersection(p1, p2, atol));
     }
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(0), TypeParam(0), TypeParam(0), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(0), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(0), TypeParam(0), TypeParam(0));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(0));
 
-        const Plucker p1(from1, to1);
-        const Plucker p2(from2, to2);
+        const Plucker p1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker p2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         EXPECT_FALSE(has_intersection(p1, p2, atol));
     }
@@ -275,15 +316,16 @@ TYPED_TEST(PluckerQueryTest, has_intersection)
 
 TYPED_TEST(PluckerQueryTest, line_contains_point)
 {
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerQueryTest<TypeParam>::absolute_tolerance();
 
-    const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-    const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+    const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+    const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-    const Plucker line(from, to);
+    const Plucker line(from.homogeneous().eval(), to.homogeneous().eval());
 
     {
         const auto point = Vector4(TypeParam(0), TypeParam(2), TypeParam(0), TypeParam(1));
@@ -297,16 +339,16 @@ TYPED_TEST(PluckerQueryTest, line_contains_point)
 
 TYPED_TEST(PluckerQueryTest, plane_contains_line)
 {
-    using Vector4 = plucker::Vector4<TypeParam>;
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
     using Plane = plucker::Plane<TypeParam>;
 
     constexpr auto atol = PluckerQueryTest<TypeParam>::absolute_tolerance();
 
-    const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-    const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+    const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+    const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-    const Plucker line(from, to);
+    const Plucker line(from.homogeneous().eval(), to.homogeneous().eval());
 
     {
         const Plane plane(TypeParam(0), TypeParam(1), TypeParam(0), TypeParam(-2));

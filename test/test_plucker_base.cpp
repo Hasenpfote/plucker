@@ -33,7 +33,6 @@ TYPED_TEST_SUITE(PluckerBaseTest, MyTypes);
 TYPED_TEST(PluckerBaseTest, Accessor)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
-    using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
@@ -50,10 +49,7 @@ TYPED_TEST(PluckerBaseTest, Accessor)
         EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
     }
     {
-        const Plucker res(
-            static_cast<Vector4>(from.homogeneous()),
-            static_cast<Vector4>(to.homogeneous())
-        );
+        const Plucker res(from.homogeneous().eval(), to.homogeneous().eval());
         EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
         EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
     }
@@ -69,15 +65,14 @@ TYPED_TEST(PluckerBaseTest, Accessor)
 TYPED_TEST(PluckerBaseTest, MultiplicationAssignment)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
-    using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
 
-    const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-    const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+    const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+    const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-    auto p = Plucker(from, to);
+    auto p = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
 
     const auto s = TypeParam(2);
 
@@ -93,15 +88,14 @@ TYPED_TEST(PluckerBaseTest, MultiplicationAssignment)
 TYPED_TEST(PluckerBaseTest, UnaryPlus)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
-    using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
 
-    const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-    const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+    const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+    const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-    const auto p = Plucker(from, to);
+    const auto p = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
 
     const Vector3 l = p.l();
     const Vector3 m = p.m();
@@ -114,15 +108,14 @@ TYPED_TEST(PluckerBaseTest, UnaryPlus)
 TYPED_TEST(PluckerBaseTest, UnaryMinus)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
-    using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
 
-    const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-    const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+    const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+    const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-    const auto p = Plucker(from, to);
+    const auto p = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
 
     const Vector3 l = -p.l();
     const Vector3 m = -p.m();
@@ -135,7 +128,6 @@ TYPED_TEST(PluckerBaseTest, UnaryMinus)
 TYPED_TEST(PluckerBaseTest, Multiplication)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
-    using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
@@ -146,14 +138,8 @@ TYPED_TEST(PluckerBaseTest, Multiplication)
         const auto from2 = Vector3(TypeParam(2), TypeParam(2), TypeParam(0));
         const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(0));
 
-        const Plucker p1(
-            static_cast<Vector4>(from1.homogeneous()),
-            static_cast<Vector4>(to1.homogeneous())
-        );
-        const Plucker p2(
-            static_cast<Vector4>(from2.homogeneous()),
-            static_cast<Vector4>(to2.homogeneous())
-        );
+        const Plucker p1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker p2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto value = p1.l().dot(p2.m()) + p2.l().dot(p1.m());
 
@@ -161,10 +147,10 @@ TYPED_TEST(PluckerBaseTest, Multiplication)
     }
     // p * scalar
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-        const Plucker p(from, to);
+        const Plucker p(from.homogeneous().eval(), to.homogeneous().eval());
 
         const auto s = TypeParam(2);
 
@@ -177,10 +163,10 @@ TYPED_TEST(PluckerBaseTest, Multiplication)
     }
     // scalar * p
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-        const Plucker p(from, to);
+        const Plucker p(from.homogeneous().eval(), to.homogeneous().eval());
 
         const auto s = TypeParam(2);
 

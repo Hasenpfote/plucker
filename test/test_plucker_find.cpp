@@ -35,19 +35,18 @@ TYPED_TEST_SUITE(PluckerFindTest, MyTypes);
 TYPED_TEST(PluckerFindTest, find_intersection_of_two_lines)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
-    using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerFindTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(0), TypeParam(2), TypeParam(0), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(2), TypeParam(0), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(0), TypeParam(2), TypeParam(0));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(2), TypeParam(0));
 
-        const Plucker line1(from1, to1);
-        const Plucker line2(from2, to2);
+        const Plucker line1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker line2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = find_intersection(line1, line2, atol);
         const Vector3 intersection = std::get<1>(res).hnormalized();
@@ -55,13 +54,13 @@ TYPED_TEST(PluckerFindTest, find_intersection_of_two_lines)
         EXPECT_VEC3_ALMOST_EQUAL(TypeParam, Vector3(TypeParam(0), TypeParam(2), TypeParam(0)), intersection, atol);
     }
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(0), TypeParam(0), TypeParam(0), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(0), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(0), TypeParam(0), TypeParam(0));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(0));
 
-        const Plucker line1(from1, to1);
-        const Plucker line2(from2, to2);
+        const Plucker line1(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const Plucker line2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = find_intersection(line1, line2, atol);
         EXPECT_FALSE(std::get<0>(res));
@@ -71,16 +70,15 @@ TYPED_TEST(PluckerFindTest, find_intersection_of_two_lines)
 TYPED_TEST(PluckerFindTest, find_intersection_of_line_and_plane)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
-    using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
     using Plane = plucker::Plane<TypeParam>;
 
     constexpr auto atol = PluckerFindTest<TypeParam>::absolute_tolerance();
 
-    const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-    const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+    const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+    const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-    const Plucker line(from, to);
+    const Plucker line(from.homogeneous().eval(), to.homogeneous().eval());
 
     {
         const Plane plane(TypeParam(0), TypeParam(0), TypeParam(1), TypeParam(1));
@@ -100,16 +98,16 @@ TYPED_TEST(PluckerFindTest, find_intersection_of_line_and_plane)
 
 TYPED_TEST(PluckerFindTest, find_intersection_of_two_planes)
 {
-    using Vector4 = plucker::Vector4<TypeParam>;
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
     using Plane = plucker::Plane<TypeParam>;
 
     constexpr auto atol = PluckerFindTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(0), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(0), TypeParam(4), TypeParam(1));
-        const auto line = Plucker(from, to);
+        const auto from = Vector3(TypeParam(0), TypeParam(0), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(0), TypeParam(4));
+        const auto line = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
 
         const auto plane1 = Plane(TypeParam(-1), TypeParam(-1), TypeParam(0), TypeParam(0));
         const auto plane2 = Plane(TypeParam(1), TypeParam(-1), TypeParam(0), TypeParam(0));
@@ -132,19 +130,18 @@ TYPED_TEST(PluckerFindTest, find_intersection_of_two_planes)
 TYPED_TEST(PluckerFindTest, find_closest_points)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
-    using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerFindTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(0), TypeParam(0), TypeParam(0), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(0), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(0), TypeParam(0), TypeParam(0));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(0));
 
-        const auto line1 = Plucker(from1, to1);
-        const auto line2 = Plucker(from2, to2);
+        const auto line1 = Plucker(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const auto line2 = Plucker(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = find_closest_points(line1, line2, atol);
         const Vector3 point1 = std::get<1>(res).hnormalized();
@@ -154,13 +151,13 @@ TYPED_TEST(PluckerFindTest, find_closest_points)
         EXPECT_VEC3_ALMOST_EQUAL(TypeParam, Vector3(TypeParam(0), TypeParam(0), TypeParam(0)), point2, atol);
     }
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(0), TypeParam(2), TypeParam(0), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(2), TypeParam(0), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(0), TypeParam(2), TypeParam(0));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(2), TypeParam(0));
 
-        const auto line1 = Plucker(from1, to1);
-        const auto line2 = Plucker(from2, to2);
+        const auto line1 = Plucker(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const auto line2 = Plucker(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = find_closest_points(line1, line2, atol);
         const Vector3 point1 = std::get<1>(res).hnormalized();
@@ -169,13 +166,13 @@ TYPED_TEST(PluckerFindTest, find_closest_points)
         EXPECT_VEC3_ALMOST_EQUAL(TypeParam, point1, point2, atol);
     }
     {
-        const auto from1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-        const auto from2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(6), TypeParam(1));
-        const auto to2 = Vector4(TypeParam(2), TypeParam(0), TypeParam(4), TypeParam(1));
+        const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+        const auto from2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(6));
+        const auto to2 = Vector3(TypeParam(2), TypeParam(0), TypeParam(4));
 
-        const auto line1 = Plucker(from1, to1);
-        const auto line2 = Plucker(from2, to2);
+        const auto line1 = Plucker(from1.homogeneous().eval(), to1.homogeneous().eval());
+        const auto line2 = Plucker(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = find_closest_points(line1, line2, atol);
         EXPECT_FALSE(std::get<0>(res));
@@ -184,16 +181,17 @@ TYPED_TEST(PluckerFindTest, find_closest_points)
 
 TYPED_TEST(PluckerFindTest, find_origin_plane_through_line)
 {
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerFindTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-        const auto line = Plucker(from, to);
+        const auto line = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
         Vector4 plane;
         plane << line.m(), TypeParam(0);
 
@@ -202,10 +200,10 @@ TYPED_TEST(PluckerFindTest, find_origin_plane_through_line)
         EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).as_vector4(), atol);
     }
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(0), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(0), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(0), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(0), TypeParam(4));
 
-        const auto line = Plucker(from, to);
+        const auto line = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
 
         const auto res = find_origin_plane_through_line(line, atol);
         EXPECT_FALSE(std::get<0>(res));
@@ -214,16 +212,17 @@ TYPED_TEST(PluckerFindTest, find_origin_plane_through_line)
 
 TYPED_TEST(PluckerFindTest, find_plane_through_line)
 {
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerFindTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-        const auto line = Plucker(from, to);
+        const auto line = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
         Vector4 plane;
         plane << line.m().cross(line.l()), line.m().squaredNorm();
 
@@ -232,10 +231,10 @@ TYPED_TEST(PluckerFindTest, find_plane_through_line)
         EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).as_vector4(), atol);
     }
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(0), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(0), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(0), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(0), TypeParam(4));
 
-        const auto line = Plucker(from, to);
+        const auto line = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
 
         const auto res = find_plane_through_line(line, atol);
         EXPECT_FALSE(std::get<0>(res));
@@ -251,10 +250,10 @@ TYPED_TEST(PluckerFindTest, find_common_plane_of_line_and_point)
     constexpr auto atol = PluckerFindTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-        const auto line = Plucker(from, to);
+        const auto line = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
         const auto point = Vector4(TypeParam(2), TypeParam(0), TypeParam(0), TypeParam(1));
         const Vector3 p = point.head(3);
         Vector4 plane;
@@ -265,10 +264,10 @@ TYPED_TEST(PluckerFindTest, find_common_plane_of_line_and_point)
         EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).as_vector4(), atol);
     }
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-        const auto line = Plucker(from, to);
+        const auto line = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
         const auto point = Vector4(TypeParam(0), TypeParam(2), TypeParam(0), TypeParam(1));
 
         const auto res = find_common_plane(line, point, atol);
@@ -285,10 +284,10 @@ TYPED_TEST(PluckerFindTest, find_common_plane_of_line_and_vector)
     constexpr auto atol = PluckerFindTest<TypeParam>::absolute_tolerance();
 
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-        const auto line = Plucker(from, to);
+        const auto line = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
         const auto vector = Vector3(TypeParam(1), TypeParam(0), TypeParam(0));
         Vector4 plane;
         plane << line.l().cross(vector), - line.m().dot(vector);
@@ -298,10 +297,10 @@ TYPED_TEST(PluckerFindTest, find_common_plane_of_line_and_vector)
         EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).as_vector4(), atol);
     }
     {
-        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+        const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+        const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
 
-        const auto line = Plucker(from, to);
+        const auto line = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
         const auto vector = Vector3(TypeParam(0), TypeParam(0), TypeParam(1));
 
         const auto res = find_common_plane(line, vector, atol);

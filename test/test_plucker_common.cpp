@@ -156,14 +156,15 @@ TYPED_TEST(PluckerCommonTest, closest_point_on_line_to_origin)
 
 TYPED_TEST(PluckerCommonTest, point_on_line)
 {
+    using Vector3 = plucker::Vector3<TypeParam>;
     using Vector4 = plucker::Vector4<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerCommonTest<TypeParam>::absolute_tolerance();
 
-    const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
-    const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
-    const auto line = Plucker(from, to);
+    const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+    const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+    const auto line = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
 
     const auto t = TypeParam(0.5);
     Vector4 expected;

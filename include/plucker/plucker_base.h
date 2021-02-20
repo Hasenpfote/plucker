@@ -81,9 +81,7 @@ template<typename T>
 Plucker<T>
 operator - (const Plucker<T>& p)
 {
-    return Plucker<T>(
-        static_cast<Vector3<T>>(-p.l()),
-        static_cast<Vector3<T>>(-p.m()));
+    return Plucker<T>((-p.l()).eval(), (-p.m()).eval());
 }
 
 /* Binary operators */
