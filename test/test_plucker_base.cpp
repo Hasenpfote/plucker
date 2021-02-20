@@ -66,7 +66,7 @@ TYPED_TEST(PluckerBaseTest, Accessor)
     }
 }
 
-TYPED_TEST(PluckerBaseTest, Multiplication)
+TYPED_TEST(PluckerBaseTest, MultiplicationAssignment)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
     using Vector4 = plucker::Vector4<TypeParam>;
@@ -74,6 +74,72 @@ TYPED_TEST(PluckerBaseTest, Multiplication)
 
     constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
 
+    const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
+    const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+
+    auto p = Plucker(from, to);
+
+    const auto s = TypeParam(2);
+
+    const Vector3 l = p.l() * s;
+    const Vector3 m = p.m() * s;
+
+    p *= s;
+
+    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, p.l(), atol);
+    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, p.m(), atol);
+}
+
+TYPED_TEST(PluckerBaseTest, UnaryPlus)
+{
+    using Vector3 = plucker::Vector3<TypeParam>;
+    using Vector4 = plucker::Vector4<TypeParam>;
+    using Plucker = plucker::Plucker<TypeParam>;
+
+    constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
+
+    const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
+    const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+
+    const auto p = Plucker(from, to);
+
+    const Vector3 l = p.l();
+    const Vector3 m = p.m();
+
+    const auto res = +p;
+    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
+    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
+}
+
+TYPED_TEST(PluckerBaseTest, UnaryMinus)
+{
+    using Vector3 = plucker::Vector3<TypeParam>;
+    using Vector4 = plucker::Vector4<TypeParam>;
+    using Plucker = plucker::Plucker<TypeParam>;
+
+    constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
+
+    const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
+    const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+
+    const auto p = Plucker(from, to);
+
+    const Vector3 l = -p.l();
+    const Vector3 m = -p.m();
+
+    const auto res = -p;
+    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
+    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
+}
+
+TYPED_TEST(PluckerBaseTest, Multiplication)
+{
+    using Vector3 = plucker::Vector3<TypeParam>;
+    using Vector4 = plucker::Vector4<TypeParam>;
+    using Plucker = plucker::Plucker<TypeParam>;
+
+    constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
+    // p1 * p2
     {
         const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
         const auto to1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
@@ -92,6 +158,38 @@ TYPED_TEST(PluckerBaseTest, Multiplication)
         const auto value = p1.l().dot(p2.m()) + p2.l().dot(p1.m());
 
         EXPECT_ALMOST_EQUAL(TypeParam, value, p1 * p2, atol);
+    }
+    // p * scalar
+    {
+        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
+        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+
+        const Plucker p(from, to);
+
+        const auto s = TypeParam(2);
+
+        const Vector3 l = p.l() * s;
+        const Vector3 m = p.m() * s;
+
+        const auto res = p * s;
+        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
+        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
+    }
+    // scalar * p
+    {
+        const auto from = Vector4(TypeParam(0), TypeParam(2), TypeParam(6), TypeParam(1));
+        const auto to = Vector4(TypeParam(0), TypeParam(2), TypeParam(4), TypeParam(1));
+
+        const Plucker p(from, to);
+
+        const auto s = TypeParam(2);
+
+        const Vector3 l = p.l() * s;
+        const Vector3 m = p.m() * s;
+
+        const auto res = s * p;
+        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
+        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
     }
 }
 

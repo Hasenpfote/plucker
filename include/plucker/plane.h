@@ -46,11 +46,61 @@ public:
     Vector3 normal() const noexcept { return Vector3(a_, b_, c_); }
     Vector4 as_vector4() const noexcept { return Vector4(a_, b_, c_, d_); }
 
+/* Assignment operators */
+    Plane& operator *= (T);
+
 private:
     T a_;
     T b_;
     T c_;
     T d_;
 };
+
+/* Assignment operators */
+
+template<typename T>
+Plane<T>&
+Plane<T>::operator *= (T rhs)
+{
+    a_ *= rhs;
+    b_ *= rhs;
+    c_ *= rhs;
+    d_ *= rhs;
+    return *this;
+}
+
+/* Unary operators */
+
+template<typename T>
+Plane<T>
+operator + (const Plane<T>& p)
+{
+    return p;
+}
+
+template<typename T>
+Plane<T>
+operator - (const Plane<T>& p)
+{
+    return Plane<T>(-p.a(), -p.b(), -p.c(), -p.d());
+}
+
+/* Binary operators */
+
+template<typename T>
+Plane<T>
+operator * (const Plane<T>& lhs, T rhs)
+{
+    Plane<T> temp(lhs);
+    return temp *= rhs;
+}
+
+template<typename T>
+Plane<T>
+operator * (T lhs, const Plane<T>& rhs)
+{
+    Plane<T> temp(rhs);
+    return temp *= lhs;
+}
 
 }   // namespace plucker

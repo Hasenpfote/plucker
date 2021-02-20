@@ -49,12 +49,60 @@ public:
     Vector3<T>& l() noexcept { return l_; }
     Vector3<T>& m() noexcept { return m_; }
 
+/* Assignment operators */
+    Plucker& operator *= (T);
+
 private:
     Vector3<T> l_;
     Vector3<T> m_;
 };
 
+/* Assignment operators */
+
+template<typename T>
+Plucker<T>&
+Plucker<T>::operator *= (T rhs)
+{
+    l_ *= rhs;
+    m_ *= rhs;
+    return *this;
+}
+
+/* Unary operators */
+
+template<typename T>
+Plucker<T>
+operator + (const Plucker<T>& p)
+{
+    return p;
+}
+
+template<typename T>
+Plucker<T>
+operator - (const Plucker<T>& p)
+{
+    return Plucker<T>(
+        static_cast<Vector3<T>>(-p.l()),
+        static_cast<Vector3<T>>(-p.m()));
+}
+
 /* Binary operators */
+
+template<typename T>
+Plucker<T>
+operator * (const Plucker<T>& lhs, T rhs)
+{
+    Plucker<T> temp(lhs);
+    return temp *= rhs;
+}
+
+template<typename T>
+Plucker<T>
+operator * (T lhs, const Plucker<T>& rhs)
+{
+    Plucker<T> temp(rhs);
+    return temp *= lhs;
+}
 
 /**
  * Computes the reciprocal product of two lines.
