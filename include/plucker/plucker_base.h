@@ -39,7 +39,7 @@ public:
     Plucker(const Vector4<T>& from, const Vector4<T>& to)
         : Plucker(
             from.w() * to.head(3) - to.w() * from.head(3),
-        	static_cast<Vector3<T>>(from.head(3)).cross(static_cast<Vector3<T>>(to.head(3))))
+        	Vector3<T>(from.head(3)).cross(Vector3<T>(to.head(3))))
     {}
 
 /* Accessors */

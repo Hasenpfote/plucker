@@ -126,7 +126,7 @@ bool has_intersection(const Plucker<T>& p1, const Plucker<T>& p2, T tolerance)
 template<typename T>
 bool contains(const Plucker<T> line, const Vector4<T>& point, T tolerance)
 {
-    const auto v = static_cast<Vector3<T>>(point.head(3)).cross(line.l());
+    const auto v = Vector3<T>(point.head(3)).cross(line.l());
     return detail::almost_equal(v, line.m(), tolerance);
 }
 
