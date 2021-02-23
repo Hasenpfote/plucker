@@ -61,3 +61,6 @@ bool not_almost_equal(
 
 #define EXPECT_VEC4_ALMOST_EQUAL(type, val1, val2, tolerance) \
     EXPECT_PRED3((gtest_helper_detail::almost_equal<type, 4, 1>), val1, val2, tolerance)
+
+#define EXPECT_VEC6_ALMOST_EQUAL(type, val1, val2, tolerance) \
+    EXPECT_PRED3((gtest_helper_detail::almost_equal<type, 6, 1>), val1, val2, tolerance)

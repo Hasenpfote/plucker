@@ -16,11 +16,7 @@ namespace plucker
 template<typename T>
 Plucker<T> normalize(const Plucker<T>& p)
 {
-    const auto norm = p.l().norm();
-    Plucker<T> res;
-    res.l() = p.l() / norm;
-    res.m() = p.m() / norm;
-    return res;
+    return Plucker<T>(p.coord() / p.l().norm());
 }
 
 /**

@@ -20,16 +20,16 @@ public:
     Plane()
     {}
 
+    explicit Plane(const Vector4& coord)
+        : coord_(coord)
+    {}
+
     Plane(T a, T b, T c, T d)
-        : coord_(a, b, c, d)
+        : Plane((Vector4() << a, b, c, d).finished())
     {}
 
     Plane(const Vector3& n, T d)
-        : coord_((Vector4() << n, d).finished())
-    {}
-
-    explicit Plane(const Vector4& coord)
-        : coord_(coord)
+        : Plane((Vector4() << n, d).finished())
     {}
 
 /* Accessors */

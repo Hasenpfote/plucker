@@ -30,9 +30,35 @@ protected:
 using MyTypes = ::testing::Types<float, double>;
 TYPED_TEST_SUITE(PluckerBaseTest, MyTypes);
 
+TYPED_TEST(PluckerBaseTest, Constructor)
+{
+    using Vector3 = plucker::Vector3<TypeParam>;
+    using Vector6 = plucker::Vector6<TypeParam>;
+    using Plucker = plucker::Plucker<TypeParam>;
+
+    constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
+
+    const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
+    const auto to = Vector3(TypeParam(0), TypeParam(2), TypeParam(4));
+
+    const auto l = to - from;
+    const auto m = from.cross(to);
+
+    const auto coord((Vector6() << l, m).finished());
+
+    const Plucker res1(coord);
+    const Plucker res2(l, m);
+    const Plucker res3(from.homogeneous().eval(), to.homogeneous().eval());
+
+    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res1.coord(), atol);
+    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res2.coord(), atol);
+    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res3.coord(), atol);
+}
+
 TYPED_TEST(PluckerBaseTest, Accessor)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
+    using Vector6 = plucker::Vector6<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
@@ -44,27 +70,32 @@ TYPED_TEST(PluckerBaseTest, Accessor)
     const auto m = from.cross(to);
 
     {
-        const Plucker res(l, m);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
+        const Vector6 coord((Vector6() << l, m).finished());
+
+        const Plucker res1(coord);
+        EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res1.coord(), atol);
+
+        Plucker res2;
+        res2.coord() = coord;
+        EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res1.coord(), atol);
     }
     {
-        const Plucker res(from.homogeneous().eval(), to.homogeneous().eval());
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
-    }
-    {
-        Plucker res;
-        res.l() = l;
-        res.m() = m;
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
+        const Plucker res1(l, m);
+        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res1.l(), atol);
+        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res1.m(), atol);
+
+        Plucker res2;
+        res2.l() = l;
+        res2.m() = m;
+        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res2.l(), atol);
+        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res2.m(), atol);
     }
 }
 
 TYPED_TEST(PluckerBaseTest, MultiplicationAssignment)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
+    using Vector6 = plucker::Vector6<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
@@ -76,18 +107,17 @@ TYPED_TEST(PluckerBaseTest, MultiplicationAssignment)
 
     const auto s = TypeParam(2);
 
-    const Vector3 l = p.l() * s;
-    const Vector3 m = p.m() * s;
+    const Vector6 coord = p.coord() * s;
 
     p *= s;
 
-    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, p.l(), atol);
-    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, p.m(), atol);
+    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, p.coord(), atol);
 }
 
 TYPED_TEST(PluckerBaseTest, UnaryPlus)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
+    using Vector6 = plucker::Vector6<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
@@ -97,17 +127,16 @@ TYPED_TEST(PluckerBaseTest, UnaryPlus)
 
     const auto p = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
 
-    const Vector3 l = p.l();
-    const Vector3 m = p.m();
+    const Vector6 coord = p.coord();
 
     const auto res = +p;
-    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
-    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
+    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res.coord(), atol);
 }
 
 TYPED_TEST(PluckerBaseTest, UnaryMinus)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
+    using Vector6 = plucker::Vector6<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
@@ -117,17 +146,16 @@ TYPED_TEST(PluckerBaseTest, UnaryMinus)
 
     const auto p = Plucker(from.homogeneous().eval(), to.homogeneous().eval());
 
-    const Vector3 l = -p.l();
-    const Vector3 m = -p.m();
+    const Vector6 coord = -p.coord();
 
     const auto res = -p;
-    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
-    EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
+    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res.coord(), atol);
 }
 
 TYPED_TEST(PluckerBaseTest, Multiplication)
 {
     using Vector3 = plucker::Vector3<TypeParam>;
+    using Vector6 = plucker::Vector6<TypeParam>;
     using Plucker = plucker::Plucker<TypeParam>;
 
     constexpr auto atol = PluckerBaseTest<TypeParam>::absolute_tolerance();
@@ -154,12 +182,10 @@ TYPED_TEST(PluckerBaseTest, Multiplication)
 
         const auto s = TypeParam(2);
 
-        const Vector3 l = p.l() * s;
-        const Vector3 m = p.m() * s;
+        const Vector6 coord = p.coord() * s;
 
         const auto res = p * s;
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
+        EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res.coord(), atol);
     }
     // scalar * p
     {
@@ -170,12 +196,10 @@ TYPED_TEST(PluckerBaseTest, Multiplication)
 
         const auto s = TypeParam(2);
 
-        const Vector3 l = p.l() * s;
-        const Vector3 m = p.m() * s;
+        const Vector6 coord = p.coord() * s;
 
         const auto res = s * p;
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res.l(), atol);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res.m(), atol);
+        EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res.coord(), atol);
     }
 }
 

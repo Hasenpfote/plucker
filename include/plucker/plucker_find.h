@@ -36,7 +36,7 @@ std::tuple<bool, Vector4<T>>
 find_intersection(const Plucker<T>& line, const Plane<T>& plane, T tolerance)
 {
     const Vector3<T> n = plane.normal();
-    if(detail::are_perpendicular(line.l(), n, tolerance))
+    if(detail::are_perpendicular(line.l().eval(), n, tolerance))
         return std::make_tuple(false, Vector4<T>());
 
     Vector4<T> point;
@@ -134,7 +134,7 @@ template<typename T>
 std::tuple<bool, Plane<T>>
 find_common_plane(const Plucker<T>& line, const Vector3<T>& vector, T tolerance)
 {
-    if(detail::are_parallel(line.l(), vector, tolerance))
+    if(detail::are_parallel(line.l().eval(), vector, tolerance))
         return std::make_tuple(false, Plane<T>());
 
     Vector4<T> plane;

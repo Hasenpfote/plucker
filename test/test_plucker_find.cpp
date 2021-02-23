@@ -115,8 +115,8 @@ TYPED_TEST(PluckerFindTest, find_intersection_of_two_planes)
         const auto res = find_intersection(plane1, plane2, atol);
         const auto intersection = std::get<1>(res);
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_TRUE(plucker::detail::are_parallel(line.l(), intersection.l(), atol));
-        EXPECT_TRUE(plucker::detail::are_parallel(line.m(), intersection.m(), atol));
+        EXPECT_TRUE(plucker::detail::are_parallel(line.l().eval(), intersection.l().eval(), atol));
+        EXPECT_TRUE(plucker::detail::are_parallel(line.m().eval(), intersection.m().eval(), atol));
     }
     {
         const auto plane1 = Plane(TypeParam(-1), TypeParam(0), TypeParam(0), TypeParam(0));

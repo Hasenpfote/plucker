@@ -60,8 +60,8 @@ bool passes_through_origin(const Plucker<T>& p, T tolerance)
 template<typename T>
 bool are_same(const Plucker<T>& p1, const Plucker<T>& p2, T tolerance)
 {
-    if(!detail::are_parallel(p1.l(), p2.l(), tolerance)
-    || !detail::are_parallel(p1.m(), p2.m(), tolerance))
+    if(!detail::are_parallel(p1.l().eval(), p2.l().eval(), tolerance)
+    || !detail::are_parallel(p1.m().eval(), p2.m().eval(), tolerance))
         return false;
 
     if(std::signbit(p1.l().dot(p2.l()))
@@ -90,7 +90,7 @@ bool are_perpendicular(const Plucker<T>& p1, const Plucker<T>& p2, T tolerance)
 template<typename T>
 bool are_parallel(const Plucker<T>& p1, const Plucker<T>& p2, T tolerance)
 {
-    return detail::are_parallel(p1.l(), p2.l(), tolerance);
+    return detail::are_parallel(p1.l().eval(), p2.l().eval(), tolerance);
 }
 
 /**
@@ -127,7 +127,7 @@ template<typename T>
 bool contains(const Plucker<T> line, const Vector4<T>& point, T tolerance)
 {
     const auto v = Vector3<T>(point.head(3)).cross(line.l());
-    return detail::almost_equal(v, line.m(), tolerance);
+    return detail::almost_equal(v, line.m().eval(), tolerance);
 }
 
 /**
@@ -145,7 +145,7 @@ bool contains(const Plane<T> plane, const Vector4<T>& point, T tolerance)
 template<typename T>
 bool contains(const Plane<T>& plane, const Plucker<T> line, T tolerance)
 {
-    if(!detail::are_perpendicular(plane.normal().eval(), line.l(), tolerance))
+    if(!detail::are_perpendicular(plane.normal().eval(), line.l().eval(), tolerance))
         return false;
 
     Vector4<T> point;

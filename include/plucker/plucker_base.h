@@ -14,6 +14,9 @@ using Vector3 = Eigen::Matrix<T, 3, 1>;
 template<typename T>
 using Vector4 = Eigen::Matrix<T, 4, 1>;
 
+template<typename T>
+using Vector6 = Eigen::Matrix<T, 6, 1>;
+
 /**
  * Plucker coordinates of a line.
  */
@@ -29,8 +32,12 @@ public:
     Plucker()
     {}
 
+    explicit Plucker(const Vector6<T>& coord)
+        : coord_(coord)
+    {}
+
     Plucker(const Vector3<T>& l, const Vector3<T>& m)
-        : l_(l), m_(m)
+        : Plucker((Vector6<T>() << l, m).finished())
     {}
     /**
      * Creates from distinct homogeneous points on a line,
@@ -43,18 +50,20 @@ public:
     {}
 
 /* Accessors */
-    const Vector3<T>& l() const noexcept { return l_; }
-    const Vector3<T>& m() const noexcept { return m_; }
+    Eigen::Ref<const Vector3<T>> l() const noexcept { return coord_.head(3); }
+    Eigen::Ref<const Vector3<T>> m() const noexcept { return coord_.tail(3); }
 
-    Vector3<T>& l() noexcept { return l_; }
-    Vector3<T>& m() noexcept { return m_; }
+    Eigen::Ref<Vector3<T>> l() noexcept { return coord_.head(3); }
+    Eigen::Ref<Vector3<T>> m() noexcept { return coord_.tail(3); }
+
+    const Vector6<T>& coord() const noexcept { return coord_; }
+    Vector6<T>& coord() noexcept { return coord_; }
 
 /* Assignment operators */
     Plucker& operator *= (T);
 
 private:
-    Vector3<T> l_;
-    Vector3<T> m_;
+    Vector6<T> coord_;
 };
 
 /* Assignment operators */
@@ -63,8 +72,7 @@ template<typename T>
 Plucker<T>&
 Plucker<T>::operator *= (T rhs)
 {
-    l_ *= rhs;
-    m_ *= rhs;
+    coord_ *= rhs;
     return *this;
 }
 
@@ -81,7 +89,7 @@ template<typename T>
 Plucker<T>
 operator - (const Plucker<T>& p)
 {
-    return Plucker<T>((-p.l()).eval(), (-p.m()).eval());
+    return Plucker<T>(-p.coord());
 }
 
 /* Binary operators */
