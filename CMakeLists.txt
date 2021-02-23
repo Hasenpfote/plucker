@@ -15,7 +15,7 @@ endif()
 ###############################################################################
 project(
     "plucker"
-    VERSION 0.4.0
+    VERSION 0.5.0
     LANGUAGES CXX
     DESCRIPTION "A header only c++ library."
     )
