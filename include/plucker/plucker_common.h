@@ -35,7 +35,7 @@ template<typename T>
 Vector3<T> closest_point(const Plucker<T>& line, const Vector3<T>& point)
 {
     const auto m = moment(line, point);
-    return point + line.l().cross(m); 
+    return point + line.l().cross(m);
 }
 
 /**
