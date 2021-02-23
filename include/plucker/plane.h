@@ -50,6 +50,12 @@ public:
     Vector4& coord() noexcept { return coord_; }
 
 private:
+    static constexpr bool needs_to_align = (sizeof(Vector4) % 16) == 0;
+
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF(needs_to_align)
+
+private:
     Vector4 coord_;
 };
 

@@ -97,4 +97,28 @@ TYPED_TEST(PlaneTest, Accessor)
     }
 }
 
+TYPED_TEST(PlaneTest, Alignment)
+{
+    using Plane = plucker::Plane<TypeParam>;
+    using Vector4 = typename Plane::Vector4;
+
+    if((sizeof(Vector4) % 16) != 0)
+        GTEST_SKIP_("It does not need to be aligned.");
+
+    {
+        Plane* p = new Plane;
+        const auto addr = reinterpret_cast<std::uintptr_t>(&(p->coord()));
+        EXPECT_TRUE((addr % 16) == 0);
+        delete p;
+    }
+    {
+        Plane* p = new Plane[2];
+        const auto addr0 = reinterpret_cast<std::uintptr_t>(&(p[0].coord()));
+        const auto addr1 = reinterpret_cast<std::uintptr_t>(&(p[1].coord()));
+        EXPECT_TRUE((addr0 % 16) == 0);
+        EXPECT_TRUE((addr1 % 16) == 0);
+        delete[] p;
+    }
+}
+
 }   // namespace

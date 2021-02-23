@@ -63,6 +63,12 @@ public:
     Plucker& operator *= (T);
 
 private:
+    static constexpr bool needs_to_align = (sizeof(Vector6<T>) % 16) == 0;
+
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF(needs_to_align)
+
+private:
     Vector6<T> coord_;
 };
 

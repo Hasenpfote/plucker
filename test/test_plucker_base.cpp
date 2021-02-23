@@ -203,4 +203,28 @@ TYPED_TEST(PluckerBaseTest, Multiplication)
     }
 }
 
+TYPED_TEST(PluckerBaseTest, Alignment)
+{
+    using Vector6 = plucker::Vector6<TypeParam>;
+    using Plucker = plucker::Plucker<TypeParam>;
+
+    if((sizeof(Vector6) % 16) != 0)
+        GTEST_SKIP_("It does not need to be aligned.");
+
+    {
+        Plucker* p = new Plucker;
+        const auto addr = reinterpret_cast<std::uintptr_t>(&(p->coord()));
+        EXPECT_TRUE((addr % 16) == 0);
+        delete p;
+    }
+    {
+        Plucker* p = new Plucker[2];
+        const auto addr0 = reinterpret_cast<std::uintptr_t>(&(p[0].coord()));
+        const auto addr1 = reinterpret_cast<std::uintptr_t>(&(p[1].coord()));
+        EXPECT_TRUE((addr0 % 16) == 0);
+        EXPECT_TRUE((addr1 % 16) == 0);
+        delete[] p;
+    }
+}
+
 }   // namespace
