@@ -50,9 +50,9 @@ TYPED_TEST(PluckerBaseTest, Constructor)
     const Plucker res2(l, m);
     const Plucker res3(from.homogeneous().eval(), to.homogeneous().eval());
 
-    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res1.coord(), atol);
-    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res2.coord(), atol);
-    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res3.coord(), atol);
+    EXPECT_MAT_ALMOST_EQUAL(coord, res1.coord(), atol);
+    EXPECT_MAT_ALMOST_EQUAL(coord, res2.coord(), atol);
+    EXPECT_MAT_ALMOST_EQUAL(coord, res3.coord(), atol);
 }
 
 TYPED_TEST(PluckerBaseTest, Accessor)
@@ -73,22 +73,22 @@ TYPED_TEST(PluckerBaseTest, Accessor)
         const Vector6 coord((Vector6() << l, m).finished());
 
         const Plucker res1(coord);
-        EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res1.coord(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(coord, res1.coord(), atol);
 
         Plucker res2;
         res2.coord() = coord;
-        EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res1.coord(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(coord, res1.coord(), atol);
     }
     {
         const Plucker res1(l, m);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res1.l(), atol);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res1.m(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(l, res1.l(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(m, res1.m(), atol);
 
         Plucker res2;
         res2.l() = l;
         res2.m() = m;
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, l, res2.l(), atol);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, m, res2.m(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(l, res2.l(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(m, res2.m(), atol);
     }
 }
 
@@ -111,7 +111,7 @@ TYPED_TEST(PluckerBaseTest, MultiplicationAssignment)
 
     p *= s;
 
-    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, p.coord(), atol);
+    EXPECT_MAT_ALMOST_EQUAL(coord, p.coord(), atol);
 }
 
 TYPED_TEST(PluckerBaseTest, UnaryPlus)
@@ -130,7 +130,7 @@ TYPED_TEST(PluckerBaseTest, UnaryPlus)
     const Vector6 coord = p.coord();
 
     const auto res = +p;
-    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res.coord(), atol);
+    EXPECT_MAT_ALMOST_EQUAL(coord, res.coord(), atol);
 }
 
 TYPED_TEST(PluckerBaseTest, UnaryMinus)
@@ -149,7 +149,7 @@ TYPED_TEST(PluckerBaseTest, UnaryMinus)
     const Vector6 coord = -p.coord();
 
     const auto res = -p;
-    EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res.coord(), atol);
+    EXPECT_MAT_ALMOST_EQUAL(coord, res.coord(), atol);
 }
 
 TYPED_TEST(PluckerBaseTest, Multiplication)
@@ -171,7 +171,7 @@ TYPED_TEST(PluckerBaseTest, Multiplication)
 
         const auto value = p1.l().dot(p2.m()) + p2.l().dot(p1.m());
 
-        EXPECT_ALMOST_EQUAL(TypeParam, value, p1 * p2, atol);
+        EXPECT_ALMOST_EQUAL(value, p1 * p2, atol);
     }
     // p * scalar
     {
@@ -185,7 +185,7 @@ TYPED_TEST(PluckerBaseTest, Multiplication)
         const Vector6 coord = p.coord() * s;
 
         const auto res = p * s;
-        EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res.coord(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(coord, res.coord(), atol);
     }
     // scalar * p
     {
@@ -199,7 +199,7 @@ TYPED_TEST(PluckerBaseTest, Multiplication)
         const Vector6 coord = p.coord() * s;
 
         const auto res = s * p;
-        EXPECT_VEC6_ALMOST_EQUAL(TypeParam, coord, res.coord(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(coord, res.coord(), atol);
     }
 }
 

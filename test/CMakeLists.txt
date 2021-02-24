@@ -46,7 +46,6 @@ target_sources(
     ${TEST_NAME}
     PRIVATE
     gtest_helper.h
-    gtest_helper.cpp
     test_mat_relational.cpp
     test_plucker_base.cpp
     test_plucker_common.cpp

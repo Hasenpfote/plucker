@@ -51,7 +51,7 @@ TYPED_TEST(PluckerCommonTest, moment_of_line_about_line)
         const auto line2 = Plucker(l2, from2.cross(l2));
 
         const auto res = moment(line1, line2);
-        EXPECT_ALMOST_EQUAL(TypeParam, line1 * line2, res, atol);
+        EXPECT_ALMOST_EQUAL(line1 * line2, res, atol);
     }
     {
         const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -66,7 +66,7 @@ TYPED_TEST(PluckerCommonTest, moment_of_line_about_line)
         const auto line2 = Plucker(l2, from2.cross(l2));
 
         const auto res = moment(line1, line2);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(0), res, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(0), res, atol);
     }
     // About skew lines.
     {
@@ -82,7 +82,7 @@ TYPED_TEST(PluckerCommonTest, moment_of_line_about_line)
         const auto line2 = Plucker(l2, from2.cross(l2));
 
         const auto res = moment(line1, line2);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(0), res, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(0), res, atol);
     }
 }
 
@@ -102,21 +102,21 @@ TYPED_TEST(PluckerCommonTest, moment_of_line_about_point)
         const auto point = Vector3(TypeParam(0), TypeParam(1), TypeParam(0));
 
         const auto res = moment(line, point);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, line.m() - point.cross(line.l()), res, atol);
+        EXPECT_MAT_ALMOST_EQUAL(line.m() - point.cross(line.l()), res, atol);
     }
     // About the origin.
     {
         const auto point = Vector3(TypeParam(0), TypeParam(0), TypeParam(0));
 
         const auto res = moment(line, point);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, line.m(), res, atol);
+        EXPECT_MAT_ALMOST_EQUAL(line.m(), res, atol);
     }
     // For the case where a point is on a line.
     {
         const auto point = Vector3(TypeParam(0), TypeParam(2), TypeParam(2));
 
         const auto res = moment(line, point);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, Vector3(TypeParam(0), TypeParam(0), TypeParam(0)), res, atol) << res;
+        EXPECT_MAT_ALMOST_EQUAL(Vector3(TypeParam(0), TypeParam(0), TypeParam(0)), res, atol) << res;
     }
 }
 
@@ -136,21 +136,21 @@ TYPED_TEST(PluckerCommonTest, closest_point_on_line_to_origin)
         const auto point = Vector3(TypeParam(0), TypeParam(1), TypeParam(0));
 
         const auto res = closest_point(line, point);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, point + line.l().cross(moment(line, point)), res, atol);
+        EXPECT_MAT_ALMOST_EQUAL(point + line.l().cross(moment(line, point)), res, atol);
     }
     // About the origin.
     {
         const auto point = Vector3(TypeParam(0), TypeParam(0), TypeParam(0));
 
         const auto res = closest_point(line, point);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, point + line.l().cross(line.m()), res, atol);
+        EXPECT_MAT_ALMOST_EQUAL(point + line.l().cross(line.m()), res, atol);
     }
     // For the case where a point is on a line.
     {
         const auto point = Vector3(TypeParam(0), TypeParam(2), TypeParam(2));
 
         const auto res = closest_point(line, point);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, point, res, atol);
+        EXPECT_MAT_ALMOST_EQUAL(point, res, atol);
     }
 }
 
@@ -171,7 +171,7 @@ TYPED_TEST(PluckerCommonTest, point_on_line)
     expected << line.l().cross(line.m()) + t * line.l(), line.l().squaredNorm();
 
     const auto res = point_on_line(line, t);
-    EXPECT_VEC4_ALMOST_EQUAL(TypeParam, expected, res, atol);
+    EXPECT_MAT_ALMOST_EQUAL(expected, res, atol);
 }
 
 }   // namespace

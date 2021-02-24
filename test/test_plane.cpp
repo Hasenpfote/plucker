@@ -43,9 +43,9 @@ TYPED_TEST(PlaneTest, Constructor)
     Plane res1(coord);
     Plane res2(coord.x(), coord.y(), coord.z(), coord.w());
     Plane res3(coord.head(3), coord.w());
-    EXPECT_VEC4_ALMOST_EQUAL(TypeParam, coord, res1.coord(), atol);
-    EXPECT_VEC4_ALMOST_EQUAL(TypeParam, coord, res2.coord(), atol);
-    EXPECT_VEC4_ALMOST_EQUAL(TypeParam, coord, res3.coord(), atol);
+    EXPECT_MAT_ALMOST_EQUAL(coord, res1.coord(), atol);
+    EXPECT_MAT_ALMOST_EQUAL(coord, res2.coord(), atol);
+    EXPECT_MAT_ALMOST_EQUAL(coord, res3.coord(), atol);
 }
 
 TYPED_TEST(PlaneTest, Accessor)
@@ -60,41 +60,41 @@ TYPED_TEST(PlaneTest, Accessor)
 
     {
         const Plane res1(coord);
-        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, coord, res1.coord(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(coord, res1.coord(), atol);
 
         Plane res2;
         res2.coord() = coord;
-        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, coord, res2.coord(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(coord, res2.coord(), atol);
     }
     {
         const Plane res1(coord);
-        EXPECT_ALMOST_EQUAL(TypeParam, coord.x(), res1.a(), atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, coord.y(), res1.b(), atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, coord.z(), res1.c(), atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, coord.w(), res1.d(), atol);
+        EXPECT_ALMOST_EQUAL(coord.x(), res1.a(), atol);
+        EXPECT_ALMOST_EQUAL(coord.y(), res1.b(), atol);
+        EXPECT_ALMOST_EQUAL(coord.z(), res1.c(), atol);
+        EXPECT_ALMOST_EQUAL(coord.w(), res1.d(), atol);
 
         Plane res2;
         res2.a() = coord.x();
         res2.b() = coord.y();
         res2.c() = coord.z();
         res2.d() = coord.w();
-        EXPECT_ALMOST_EQUAL(TypeParam, coord.x(), res2.a(), atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, coord.y(), res2.b(), atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, coord.z(), res2.c(), atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, coord.w(), res2.d(), atol);
+        EXPECT_ALMOST_EQUAL(coord.x(), res2.a(), atol);
+        EXPECT_ALMOST_EQUAL(coord.y(), res2.b(), atol);
+        EXPECT_ALMOST_EQUAL(coord.z(), res2.c(), atol);
+        EXPECT_ALMOST_EQUAL(coord.w(), res2.d(), atol);
     }
     {
         const Vector3 n = coord.head(3);
 
         const Plane res1(coord);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, n, res1.normal(), atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, coord.w(), res1.d(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(n, res1.normal(), atol);
+        EXPECT_ALMOST_EQUAL(coord.w(), res1.d(), atol);
 
         Plane res2;
         res2.normal() = n;
         res2.d() = coord.w();
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, n, res2.normal(), atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, coord.w(), res2.d(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(n, res2.normal(), atol);
+        EXPECT_ALMOST_EQUAL(coord.w(), res2.d(), atol);
     }
 }
 

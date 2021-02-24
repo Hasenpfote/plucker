@@ -45,8 +45,8 @@ TYPED_TEST(PluckerGeometricTest, normalize)
 
     const auto res = normalize(line);
 
-    EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(1), res.l().norm(), atol);
-    EXPECT_ALMOST_EQUAL(TypeParam, line.m().norm() / line.l().norm(), res.m().norm(), atol);
+    EXPECT_ALMOST_EQUAL(TypeParam(1), res.l().norm(), atol);
+    EXPECT_ALMOST_EQUAL(line.m().norm() / line.l().norm(), res.m().norm(), atol);
 }
 
 TYPED_TEST(PluckerGeometricTest, squared_distance_from_origin_to_line)
@@ -62,7 +62,7 @@ TYPED_TEST(PluckerGeometricTest, squared_distance_from_origin_to_line)
     const Plucker line(from.homogeneous().eval(), to.homogeneous().eval());
 
     const auto res = squared_distance(line);
-    EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(4), res, atol);
+    EXPECT_ALMOST_EQUAL(TypeParam(4), res, atol);
 }
 
 TYPED_TEST(PluckerGeometricTest, distance_from_origin_to_line)
@@ -78,7 +78,7 @@ TYPED_TEST(PluckerGeometricTest, distance_from_origin_to_line)
     const Plucker line(from.homogeneous().eval(), to.homogeneous().eval());
 
     const auto res = distance(line);
-    EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(2), res, atol);
+    EXPECT_ALMOST_EQUAL(TypeParam(2), res, atol);
 }
 
 TYPED_TEST(PluckerGeometricTest, distance_of_between_skew_lines)
@@ -98,7 +98,7 @@ TYPED_TEST(PluckerGeometricTest, distance_of_between_skew_lines)
         const Plucker line2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = distance_of_between_skew_lines(line1, line2);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(2), res, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(2), res, atol);
     }
     {
         const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -110,7 +110,7 @@ TYPED_TEST(PluckerGeometricTest, distance_of_between_skew_lines)
         const Plucker line2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = distance_of_between_skew_lines(line1, line2);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(0), res, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(0), res, atol);
     }
 }
 
@@ -131,7 +131,7 @@ TYPED_TEST(PluckerGeometricTest, distance_of_between_two_parallel_lines)
         const Plucker line2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = distance_of_between_two_parallel_lines(line1, line2);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(2), res, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(2), res, atol);
     }
     {
         const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -143,7 +143,7 @@ TYPED_TEST(PluckerGeometricTest, distance_of_between_two_parallel_lines)
         const Plucker line2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = distance_of_between_two_parallel_lines(line1, line2);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(0), res, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(0), res, atol);
     }
 }
 
@@ -164,7 +164,7 @@ TYPED_TEST(PluckerGeometricTest, distance_between_two_lines)
         const Plucker line2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = distance(line1, line2, atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(2), res, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(2), res, atol);
     }
     {
         const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -176,7 +176,7 @@ TYPED_TEST(PluckerGeometricTest, distance_between_two_lines)
         const Plucker line2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = distance(line1, line2, atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(0), res, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(0), res, atol);
     }
     {
         const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -188,7 +188,7 @@ TYPED_TEST(PluckerGeometricTest, distance_between_two_lines)
         const Plucker line2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = distance(line1, line2, atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(2), res, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(2), res, atol);
     }
     {
         const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -200,7 +200,7 @@ TYPED_TEST(PluckerGeometricTest, distance_between_two_lines)
         const Plucker line2(from2.homogeneous().eval(), to2.homogeneous().eval());
 
         const auto res = distance(line1, line2, atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(0), res, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(0), res, atol);
     }
 }
 
@@ -221,11 +221,11 @@ TYPED_TEST(PluckerGeometricTest, distance_from_point_to_line)
         // A Point is not on a Line.
         const auto point1 = Vector4(TypeParam(0), TypeParam(0), TypeParam(0), TypeParam(1));
         const auto res1 = distance(line, point1, atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(2), res1, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(2), res1, atol);
         // A Point is on a Line.
         const auto point2 = Vector4(TypeParam(0), TypeParam(2), TypeParam(0), TypeParam(1));
         const auto res2 = distance(line, point2, atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(0), res2, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(0), res2, atol);
     }
     {
         // A line passes through the origin.
@@ -236,11 +236,11 @@ TYPED_TEST(PluckerGeometricTest, distance_from_point_to_line)
         // A Point is not on a Line.
         const auto point1 = Vector4(TypeParam(0), TypeParam(2), TypeParam(0), TypeParam(1));
         const auto res1 = distance(line, point1, atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(2), res1, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(2), res1, atol);
         // A Point is on a Line.
         const auto point2 = Vector4(TypeParam(0), TypeParam(0), TypeParam(0), TypeParam(1));
         const auto res2 = distance(line, point2, atol);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(0), res2, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(0), res2, atol);
     }
 }
 
@@ -260,11 +260,11 @@ TYPED_TEST(PluckerGeometricTest, distance_from_point_to_normalized_line)
         // A Point is not on a Line.
         const auto point1 = Vector3(TypeParam(0), TypeParam(0), TypeParam(0));
         const auto res1 = distance(line, point1);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(2), res1, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(2), res1, atol);
         // A Point is on a Line.
         const auto point2 = Vector3(TypeParam(0), TypeParam(2), TypeParam(0));
         const auto res2 = distance(line, point2);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(0), res2, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(0), res2, atol);
     }
     {
         // A line passes through the origin.
@@ -275,11 +275,11 @@ TYPED_TEST(PluckerGeometricTest, distance_from_point_to_normalized_line)
         // A Point is not on a Line.
         const auto point1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(0));
         const auto res1 = distance(line, point1);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(2), res1, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(2), res1, atol);
         // A Point is on a Line.
         const auto point2 = Vector3(TypeParam(0), TypeParam(0), TypeParam(0));
         const auto res2 = distance(line, point2);
-        EXPECT_ALMOST_EQUAL(TypeParam, TypeParam(0), res2, atol);
+        EXPECT_ALMOST_EQUAL(TypeParam(0), res2, atol);
     }
 }
 

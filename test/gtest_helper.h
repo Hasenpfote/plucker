@@ -1,21 +1,80 @@
 #pragma once
 
 #include <gtest/gtest.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
-namespace gtest_helper_detail
+namespace gtest_helper
+{
+
+namespace detail
 {
 
 template<typename T>
-bool almost_equal(T lhs, T rhs, T tolerance);
+constexpr T abs(T x)
+{
+    return x < T(0.0) ? -x : x;
+}
 
-extern template bool almost_equal(float lhs, float rhs, float tolerance);
-extern template bool almost_equal(double lhs, double rhs, double tolerance);
+#if ((defined(_MSVC_LANG) && _MSVC_LANG < 201402L) || __cplusplus < 201402L)
+template <class T>
+constexpr const T& max(const T& a, const T& b)
+{
+    return a < b ? b : a;
+}
+#endif
 
 template<typename T>
-bool not_almost_equal(T lhs, T rhs, T tolerance);
+bool almost_equal(T lhs, T rhs, T rel_tolerance, T abs_tolerance)
+{
+#if (__cplusplus >= 201402L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201402L))
+    return abs(lhs - rhs)
+        <= std::max(abs_tolerance, rel_tolerance * std::max(abs(lhs), abs(rhs)));
+#else
+    return abs(lhs - rhs)
+        <= max(abs_tolerance, rel_tolerance * max(abs(lhs), abs(rhs)));
+#endif
+}
 
-extern template bool not_almost_equal(float lhs, float rhs, float tolerance);
-extern template bool not_almost_equal(double lhs, double rhs, double tolerance);
+template<typename T>
+bool almost_equal(T lhs, T rhs, T tolerance)
+{
+#if (__cplusplus >= 201402L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201402L))
+    return abs(lhs - rhs)
+        <= tolerance * std::max(T(1), std::max(abs(lhs), abs(rhs)));
+#else
+    return abs(lhs - rhs)
+        <= tolerance * max(T(1), max(abs(lhs), abs(rhs)));
+#endif
+}
+
+template<typename T>
+bool not_almost_equal(T lhs, T rhs, T tolerance)
+{
+    return !almost_equal(lhs, rhs, tolerance);
+}
+
+template<typename T>
+::testing::AssertionResult
+assert_almost_equal_pred3_format(
+    const char* e1,
+    const char* e2,
+    const char* e3,
+    T v1,
+    T v2,
+    T v3)
+{
+    if(almost_equal(v1, v2, v3))
+        return ::testing::AssertionSuccess();
+
+    return ::testing::AssertionFailure()
+        << "pred_text" << "(" << e1 << ", " << e2 << ", " << e3
+        << ") evaluates to false, where"
+        << "\n"
+        << e1 << " evaluates to " << ::testing::PrintToString(v1) << "\n"
+        << e2 << " evaluates to " << ::testing::PrintToString(v2) << "\n"
+        << e3 << " evaluates to " << ::testing::PrintToString(v3);
+}
 
 template<typename DerivedA, typename DerivedB>
 bool almost_equal(
@@ -58,25 +117,15 @@ assert_mat_almost_equal_pred3_format(
         << e3 << " evaluates to " << ::testing::PrintToString(v3);
 }
 
-}   // gtest_helper_detail
+}   // namespace detail
 
-#define EXPECT_ALMOST_EQUAL(type, lhs, rhs, tolerance) \
-    EXPECT_PRED3(gtest_helper_detail::almost_equal<type>, lhs, rhs, tolerance)
+}   // namespace gtest_helper
 
-#define EXPECT_NOT_ALMOST_EQUAL(type, lhs, rhs, tolerance) \
-    EXPECT_PRED3(gtest_helper_detail::not_almost_equal<type>, lhs, rhs, tolerance)
+#define EXPECT_ALMOST_EQUAL(lhs, rhs, tolerance) \
+    EXPECT_PRED_FORMAT3(gtest_helper::detail::assert_almost_equal_pred3_format, lhs, rhs, tolerance)
 
 #define EXPECT_MAT_ALMOST_EQUAL(lhs, rhs, tolerance) \
-    EXPECT_PRED_FORMAT3(gtest_helper_detail::assert_mat_almost_equal_pred3_format, lhs, rhs, tolerance)
+    EXPECT_PRED_FORMAT3(gtest_helper::detail::assert_mat_almost_equal_pred3_format, lhs, rhs, tolerance)
 
 #define EXPECT_QUAT_ALMOST_EQUAL(lhs, rhs, tolerance) \
     EXPECT_MAT_ALMOST_EQUAL(lhs.coeffs(), rhs.coeffs(), tolerance)
-
-#define EXPECT_VEC3_ALMOST_EQUAL(type, lhs, rhs, tolerance) \
-    EXPECT_MAT_ALMOST_EQUAL(lhs, rhs, tolerance)
-
-#define EXPECT_VEC4_ALMOST_EQUAL(type, lhs, rhs, tolerance) \
-    EXPECT_MAT_ALMOST_EQUAL(lhs, rhs, tolerance)
-
-#define EXPECT_VEC6_ALMOST_EQUAL(type, lhs, rhs, tolerance) \
-    EXPECT_MAT_ALMOST_EQUAL(lhs, rhs, tolerance)

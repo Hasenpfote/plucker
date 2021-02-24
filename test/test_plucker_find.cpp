@@ -51,7 +51,7 @@ TYPED_TEST(PluckerFindTest, find_intersection_of_two_lines)
         const auto res = find_intersection(line1, line2, atol);
         const Vector3 intersection = std::get<1>(res).hnormalized();
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, Vector3(TypeParam(0), TypeParam(2), TypeParam(0)), intersection, atol);
+        EXPECT_MAT_ALMOST_EQUAL(Vector3(TypeParam(0), TypeParam(2), TypeParam(0)), intersection, atol);
     }
     {
         const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -86,7 +86,7 @@ TYPED_TEST(PluckerFindTest, find_intersection_of_line_and_plane)
         const auto res = find_intersection(line, plane, atol);
         const Vector3 intersection = std::get<1>(res).hnormalized();
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, Vector3(TypeParam(0), TypeParam(2), TypeParam(-1)), intersection, atol);
+        EXPECT_MAT_ALMOST_EQUAL(Vector3(TypeParam(0), TypeParam(2), TypeParam(-1)), intersection, atol);
     }
     {
         const Plane plane(TypeParam(1), TypeParam(0), TypeParam(0), TypeParam(0));
@@ -147,8 +147,8 @@ TYPED_TEST(PluckerFindTest, find_closest_points)
         const Vector3 point1 = std::get<1>(res).hnormalized();
         const Vector3 point2 = std::get<2>(res).hnormalized();
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, Vector3(TypeParam(0), TypeParam(2), TypeParam(0)), point1, atol);
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, Vector3(TypeParam(0), TypeParam(0), TypeParam(0)), point2, atol);
+        EXPECT_MAT_ALMOST_EQUAL(Vector3(TypeParam(0), TypeParam(2), TypeParam(0)), point1, atol);
+        EXPECT_MAT_ALMOST_EQUAL(Vector3(TypeParam(0), TypeParam(0), TypeParam(0)), point2, atol);
     }
     {
         const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -163,7 +163,7 @@ TYPED_TEST(PluckerFindTest, find_closest_points)
         const Vector3 point1 = std::get<1>(res).hnormalized();
         const Vector3 point2 = std::get<2>(res).hnormalized();
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC3_ALMOST_EQUAL(TypeParam, point1, point2, atol);
+        EXPECT_MAT_ALMOST_EQUAL(point1, point2, atol);
     }
     {
         const auto from1 = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -197,7 +197,7 @@ TYPED_TEST(PluckerFindTest, find_origin_plane_through_line)
 
         const auto res = find_origin_plane_through_line(line, atol);
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).coord(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(plane, std::get<1>(res).coord(), atol);
     }
     {
         const auto from = Vector3(TypeParam(0), TypeParam(0), TypeParam(6));
@@ -228,7 +228,7 @@ TYPED_TEST(PluckerFindTest, find_plane_through_line)
 
         const auto res = find_plane_through_line(line, atol);
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).coord(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(plane, std::get<1>(res).coord(), atol);
     }
     {
         const auto from = Vector3(TypeParam(0), TypeParam(0), TypeParam(6));
@@ -261,7 +261,7 @@ TYPED_TEST(PluckerFindTest, find_common_plane_of_line_and_point)
 
         const auto res = find_common_plane(line, point, atol);
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).coord(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(plane, std::get<1>(res).coord(), atol);
     }
     {
         const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
@@ -294,7 +294,7 @@ TYPED_TEST(PluckerFindTest, find_common_plane_of_line_and_vector)
 
         const auto res = find_common_plane(line, vector, atol);
         EXPECT_TRUE(std::get<0>(res));
-        EXPECT_VEC4_ALMOST_EQUAL(TypeParam, plane, std::get<1>(res).coord(), atol);
+        EXPECT_MAT_ALMOST_EQUAL(plane, std::get<1>(res).coord(), atol);
     }
     {
         const auto from = Vector3(TypeParam(0), TypeParam(2), TypeParam(6));
