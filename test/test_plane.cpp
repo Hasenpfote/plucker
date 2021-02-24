@@ -51,6 +51,7 @@ TYPED_TEST(PlaneTest, Constructor)
 TYPED_TEST(PlaneTest, Accessor)
 {
     using Plane = plucker::Plane<TypeParam>;
+    using Vector3 = typename Plane::Vector3;
     using Vector4 = typename Plane::Vector4;
 
     constexpr auto atol = PlaneTest<TypeParam>::absolute_tolerance();
@@ -83,7 +84,7 @@ TYPED_TEST(PlaneTest, Accessor)
         EXPECT_ALMOST_EQUAL(TypeParam, coord.w(), res2.d(), atol);
     }
     {
-        const auto n = coord.head(3);
+        const Vector3 n = coord.head(3);
 
         const Plane res1(coord);
         EXPECT_VEC3_ALMOST_EQUAL(TypeParam, n, res1.normal(), atol);
