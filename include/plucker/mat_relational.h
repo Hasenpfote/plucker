@@ -19,8 +19,8 @@ template<typename Derived>
 bool almost_equal(
     const Eigen::MatrixBase<Derived>& lhs,
     const Eigen::MatrixBase<Derived>& rhs,
-    typename Eigen::MatrixBase<Derived>::RealScalar rel_tolerance,
-    typename Eigen::MatrixBase<Derived>::RealScalar abs_tolerance)
+    const typename Derived::RealScalar& rel_tolerance,
+    const typename Derived::RealScalar& abs_tolerance)
 {
     return ((lhs - rhs).array().abs()
         <= Eigen::MatrixBase<Derived>::Constant(abs_tolerance).array().max(rel_tolerance * lhs.array().abs().max(rhs.array().abs()))).all();
@@ -33,7 +33,7 @@ template<typename Derived>
 bool almost_equal(
     const Eigen::MatrixBase<Derived>& lhs,
     const Eigen::MatrixBase<Derived>& rhs,
-    typename Eigen::MatrixBase<Derived>::RealScalar tolerance)
+    const typename Derived::RealScalar& tolerance)
 {
     return ((lhs - rhs).array().abs()
         <= tolerance * Eigen::MatrixBase<Derived>::Ones().array().max(lhs.array().abs().max(rhs.array().abs()))).all();
@@ -45,7 +45,7 @@ bool almost_equal(
 template<typename Derived>
 bool almost_zero(
     const Eigen::MatrixBase<Derived>& x,
-    typename Eigen::MatrixBase<Derived>::RealScalar tolerance)
+    const typename Derived::RealScalar& tolerance)
 {
     return (x.array().abs() <= tolerance).all();
 }
