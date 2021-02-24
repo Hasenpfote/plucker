@@ -15,28 +15,28 @@ namespace detail
 /**
  * Returns true if two matrices are element-wise equal within tolerance.
  */
-template<typename Derived>
+template<typename DerivedA, typename DerivedB>
 bool almost_equal(
-    const Eigen::MatrixBase<Derived>& lhs,
-    const Eigen::MatrixBase<Derived>& rhs,
-    const typename Derived::RealScalar& rel_tolerance,
-    const typename Derived::RealScalar& abs_tolerance)
+    const Eigen::MatrixBase<DerivedA>& lhs,
+    const Eigen::MatrixBase<DerivedB>& rhs,
+    const typename DerivedA::RealScalar& rel_tolerance,
+    const typename DerivedA::RealScalar& abs_tolerance)
 {
     return ((lhs - rhs).array().abs()
-        <= Eigen::MatrixBase<Derived>::Constant(abs_tolerance).array().max(rel_tolerance * lhs.array().abs().max(rhs.array().abs()))).all();
+        <= Eigen::MatrixBase<DerivedA>::Constant(abs_tolerance).array().max(rel_tolerance * lhs.array().abs().max(rhs.array().abs()))).all();
 }
 
 /**
  * Returns true if two matrices are element-wise equal within tolerance.
  */
-template<typename Derived>
+template<typename DerivedA, typename DerivedB>
 bool almost_equal(
-    const Eigen::MatrixBase<Derived>& lhs,
-    const Eigen::MatrixBase<Derived>& rhs,
-    const typename Derived::RealScalar& tolerance)
+    const Eigen::MatrixBase<DerivedA>& lhs,
+    const Eigen::MatrixBase<DerivedB>& rhs,
+    const typename DerivedA::RealScalar& tolerance)
 {
     return ((lhs - rhs).array().abs()
-        <= tolerance * Eigen::MatrixBase<Derived>::Ones().array().max(lhs.array().abs().max(rhs.array().abs()))).all();
+        <= tolerance * Eigen::MatrixBase<DerivedA>::Ones().array().max(lhs.array().abs().max(rhs.array().abs()))).all();
 }
 
 /**
